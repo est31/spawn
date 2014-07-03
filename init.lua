@@ -1,19 +1,41 @@
 --Spawn mod for Minetest
---Originally written by VanessaE (I think), modified by cheapie
---License unknown for original code, modifications are WTFPL
+--Originally written by VanessaE (I think), rewritten by cheapie
+--WTFPL
 
-minetest.register_on_chat_message(function(name, message, playername, player)
-	local cmd = "/spawn"
-	if message:sub(0, #cmd) == cmd then
-		if message == '/spawn' then
-			local player = minetest.env:get_player_by_name(name)
-			if minetest.setting_get_pos("static_spawnpoint") then
-				minetest.chat_send_player(player:get_player_name(), "Teleporting to spawn...")
-				player:setpos(minetest.setting_get_pos("static_spawnpoint"))
-			else
-				minetest.chat_send_player(player:get_player_name(), "ERROR: No spawn point is set on this server!")
-			end
-			return true
+
+minetest.register_chatcommand("spawn", {
+	params = "",
+	description = "Teleport to the spawn point",
+	func = function(name, param)
+		local player = minetest.get_player_by_name(name)
+		if not player then
+			return false, "Player not found"
 		end
-	end
-end)
+		if minetest.setting_get_pos("static_spawnpoint") then
+			player:setpos(minetest.setting_get_pos("static_spawnpoint"))
+			return true, "Teleporting to spawn..."
+		else
+			return false, "The spawn point is not set!"
+		end
+	end,
+})
+
+minetest.register_chatcommand("setspawn", {
+	params = "",
+	description = "Sets the spawn point to your current position",
+	privs = { server=true },
+	func = function(name, param)
+		local player = minetest.get_player_by_name(name)
+		if not player then
+			return false, "Player not found"
+		end
+		local pos = player:getpos()
+		local x = pos.x
+		local y = pos.y
+		local z = pos.z
+		local pos_string = x..","..y..","..z
+		local pos_string_2 = "Setting spawn point to ("..x..", "..y..", "..z..")"
+		minetest.setting_set("static_spawnpoint",pos_string)
+		return true, pos_string_2
+	end,
+})
