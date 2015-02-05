@@ -38,6 +38,7 @@ minetest.register_chatcommand("setspawn", {
 		local pos_string_2 = "Setting spawn point to ("..x..", "..y..", "..z..")"
 		minetest.setting_set("static_spawnpoint",pos_string)
 		spawn_spawnpos = pos
+		minetest.setting_save()
 		return true, pos_string_2
 	end,
 })
