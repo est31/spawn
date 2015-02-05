@@ -2,6 +2,7 @@
 --Originally written by VanessaE (I think), rewritten by cheapie
 --WTFPL
 
+local spawn_spawnpos = minetest.setting_get_pos("static_spawnpoint")
 
 minetest.register_chatcommand("spawn", {
 	params = "",
@@ -11,8 +12,8 @@ minetest.register_chatcommand("spawn", {
 		if not player then
 			return false, "Player not found"
 		end
-		if minetest.setting_get_pos("static_spawnpoint") then
-			player:setpos(minetest.setting_get_pos("static_spawnpoint"))
+		if spawn_spawnpos then
+			player:setpos(spawn_spawnpos)
 			return true, "Teleporting to spawn..."
 		else
 			return false, "The spawn point is not set!"
@@ -36,6 +37,7 @@ minetest.register_chatcommand("setspawn", {
 		local pos_string = x..","..y..","..z
 		local pos_string_2 = "Setting spawn point to ("..x..", "..y..", "..z..")"
 		minetest.setting_set("static_spawnpoint",pos_string)
+		spawn_spawnpos = pos
 		return true, pos_string_2
 	end,
 })
